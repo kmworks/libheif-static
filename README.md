@@ -9,7 +9,6 @@ They are built with [vcpkg](https://github.com/microsoft/vcpkg) at the commit in
 | `x86_64-unknown-linux-gnu` | `x64-linux` |
 | `aarch64-unknown-linux-gnu` | `arm64-linux` |
 | `aarch64-apple-darwin` | `arm64-osx` |
-| `x86_64-apple-darwin` | `x64-osx` |
 | `x86_64-pc-windows-msvc` | `x64-windows-static-md` |
 
 Linux archives are built on Ubuntu 24.04, so their glibc matches the kmrs release builds. macOS archives target macOS 11.0.
@@ -26,8 +25,6 @@ export SYSTEM_DEPS_LIBHEIF_LINK=static
 ```
 
 On Windows, set `VCPKG_ROOT` to the extracted directory and `VCPKGRS_TRIPLET=x64-windows-static-md`.
-
-On `x86_64-apple-darwin`, also link `libclang_rt.osx.a`: libheif's CPU feature checks need compiler-rt, which rustc does not link.
 
 ## Releasing
 
