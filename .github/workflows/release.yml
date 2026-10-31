@@ -49,7 +49,22 @@ jobs:
           cp -R vcpkg/installed/vcpkg "dist/$root/installed/"
           touch "dist/$root/.vcpkg-root"
           cp vcpkg.commit README.md "dist/$root/"
+          cp -R licenses "dist/$root/"
           find "dist/$root/installed/${{ matrix.triplet }}/lib" -maxdepth 1 -type f | sort
+          tar -C dist -czf "dist/$root.tar.gz" "$root"
+      # LGPL recipients are owed the corresponding source, so it ships with the binaries
+      - if: matrix.target == 'x86_64-unknown-linux-gnu'
+        name: Package sources
+        run: |
+          root=libheif-static-sources
+          mkdir -p "dist/$root/ports" "dist/$root/downloads"
+          cp -R vcpkg/ports/libheif vcpkg/ports/libde265 "dist/$root/ports/"
+          cp vcpkg/downloads/*libheif* vcpkg/downloads/*libde265* "dist/$root/downloads/"
+          cp vcpkg.commit README.md "dist/$root/"
+          cp -R licenses "dist/$root/"
+          ls -l "dist/$root/downloads"
+          test "$(ls "dist/$root/downloads" | grep -c libheif)" -ge 1
+          test "$(ls "dist/$root/downloads" | grep -c libde265)" -ge 1
           tar -C dist -czf "dist/$root.tar.gz" "$root"
       - uses: actions/upload-artifact@v7
         with:

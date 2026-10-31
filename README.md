@@ -28,12 +28,14 @@ On Windows, set `VCPKG_ROOT` to the extracted directory and `VCPKGRS_TRIPLET=x64
 
 ## Releasing
 
-Update `vcpkg.commit`, then push a `v<libheif version>-<revision>` tag. The workflow builds every target and publishes the archives with `SHA256SUMS`.
+Update `vcpkg.commit`, then push a `v<libheif version>-<revision>` tag. The workflow builds every target and publishes the archives, the sources and `SHA256SUMS`.
 
 ## Licenses
 
-The scripts in this repository are under the MIT license. The packaged libraries keep their own licenses, which each archive includes under `installed/<triplet>/share/<port>/copyright`:
+The scripts in this repository are under the MIT license. The packaged libraries keep their own licenses, which each archive includes under `installed/<triplet>/share/<port>/copyright`, with the full LGPL and GPL texts in `licenses/`:
 
 - libheif: LGPL-3.0-only AND MIT
 - libde265: LGPL-3.0-only AND DOC
 - dav1d: BSD-2-Clause AND ISC
+
+Every release also publishes `libheif-static-sources.tar.gz`: the exact libheif and libde265 source archives vcpkg built, with the vcpkg ports and patches applied to them.
