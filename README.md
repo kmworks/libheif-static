@@ -1,6 +1,6 @@
 # libheif-static
 
-Prebuilt static libraries of [libheif](https://github.com/strukturag/libheif), [libde265](https://github.com/strukturag/libde265) and [dav1d](https://code.videolan.org/videolan/dav1d), for linking into [kmrs](https://github.com/kmworks/kmrs) release binaries.
+Prebuilt static libraries of [libheif](https://github.com/strukturag/libheif), [libde265](https://github.com/strukturag/libde265) and [dav1d](https://code.videolan.org/videolan/dav1d), for linking into [kmrs](https://github.com/kmworks/kmrs).
 
 They are built with [vcpkg](https://github.com/microsoft/vcpkg) at the commit in `vcpkg.commit`, with no encoders: x265, which is GPL, is deliberately left out.
 
@@ -13,26 +13,26 @@ They are built with [vcpkg](https://github.com/microsoft/vcpkg) at the commit in
 
 Linux archives are built on Ubuntu 24.04, so their glibc matches the kmrs release builds. macOS archives target macOS 11.0.
 
-## Using an archive
+## Using the crate
 
-Each archive keeps vcpkg's layout: `.vcpkg-root` at the top and the libraries under `installed/<triplet>`.
+This repository is also a drop-in replacement for the [`libheif-sys`](https://crates.io/crates/libheif-sys) crate, with the same version, features and bindings. Its build script downloads the archive for the target, verifies it against `SHA256SUMS` and links it statically, so `cargo build` needs neither `pkg-config`, vcpkg nor a system libheif.
 
-On Linux and macOS, point `pkg-config` at it. The `.pc` files are relocatable:
-
-```sh
-export PKG_CONFIG_PATH="$PWD/libheif-static-<target>/installed/<triplet>/lib/pkgconfig"
-export SYSTEM_DEPS_LIBHEIF_LINK=static
+```toml
+[patch.crates-io]
+libheif-sys = { git = "https://github.com/kmworks/libheif-static", rev = "<commit>" }
 ```
 
-On Windows, set `VCPKG_ROOT` to the extracted directory and `VCPKGRS_TRIPLET=x64-windows-static-md`.
+To build offline, extract an archive and point `LIBHEIF_STATIC_DIR` at it.
 
 ## Releasing
 
 Update `vcpkg.commit`, then push a `v<libheif version>-<revision>` tag. The workflow builds every target and publishes the archives, the sources and `SHA256SUMS`.
 
+Then copy the release's `SHA256SUMS` to the repository root and update `ARCHIVE_TAG` in `build.rs`. To follow a new `libheif-sys` release, replace `src/bindings` and the version in `Cargo.toml`.
+
 ## Licenses
 
-The scripts in this repository are under the MIT license. The packaged libraries keep their own licenses, which each archive includes under `installed/<triplet>/share/<port>/copyright`, with the full LGPL and GPL texts in `licenses/`:
+The scripts in this repository are under the MIT license. The bindings come from [libheif-sys](https://github.com/Cykooz/libheif-sys) by Kirill Kuzminykh, also MIT (`LICENSE-libheif-sys`). The packaged libraries keep their own licenses, which each archive includes under `installed/<triplet>/share/<port>/copyright`, with the full LGPL and GPL texts in `licenses/`:
 
 - libheif: LGPL-3.0-only AND MIT
 - libde265: LGPL-3.0-only AND DOC
